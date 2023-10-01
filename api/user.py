@@ -1,6 +1,7 @@
+from typing import Annotated
 from fastapi import APIRouter, Depends
 from models.user import User, UserModel
-from typing import Annotated
+# from typing import Annotated
 from fastapi.security import OAuth2PasswordBearer
 
 router = APIRouter()
