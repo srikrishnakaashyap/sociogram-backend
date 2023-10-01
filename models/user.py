@@ -3,7 +3,7 @@ from typing import Optional
 
 class User(Document):
     name: str
-    id: str
+    userid: str
     description: Optional[str] = None
     age: int
     access: int
