@@ -1,13 +1,31 @@
 from fastapi import APIRouter, Depends
-from services.user_service import UserService
+from models.user import User, UserModel
+from typing import Annotated
+from fastapi.security import OAuth2PasswordBearer
 
 router = APIRouter()
 
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
-@router.get('/', include_in_schema=False)
-async def create():
-    user = await UserService.create_user(user_props={'name': 'test', 'age': 19, 'id': 'test1'})
-    print(user)
+def fake_decode_token(token):
+    return User(
+        username=token + "fakedecoded", email="john@example.com", full_name="John Doe"
+    )
+
+
+async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
+    user = fake_decode_token(token)
+    return user
+
+
+@router.get("/me")
+async def read_users_me(current_user: Annotated[User, Depends(get_current_user)]):
+    return current_user
+
+@router.post('/create', response_description="created user")
+async def create(user: User)->dict:
+    response = await user.create()
+    print(response)
     return {'message': 'user created'}
 
 
