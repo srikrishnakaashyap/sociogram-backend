@@ -1,19 +1,16 @@
 from beanie import Document
 from typing import Optional
-from pydantic import BaseModel
+from pydantic import EmailStr
 
-class UserModel(BaseModel):
-    name: str
-    userid: str
-    description: Optional[str] = None
-    age: int
 
 class User(Document):
     name: str
-    userid: str
     description: Optional[str] = None
     age: int
     access: Optional[int] = 10
+    email: str
+    password: str
+    userId: Optional[str] = None
     
     class Settings:
         name = "users"
