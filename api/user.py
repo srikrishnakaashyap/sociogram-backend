@@ -10,14 +10,13 @@ router = APIRouter()
 oauth2_scheme = GC.OAUTH2_SCHEME
 
 def fake_decode_token(token):
-    print("HERE", token)
     return User.find_one(User.email == token)
 
 def fake_hash_password(password: str):
     return "fakehashed" + password
 
 async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
-    user = fake_decode_token(token)
+    user = await fake_decode_token(token)
     return user
 
 
