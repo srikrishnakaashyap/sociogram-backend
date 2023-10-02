@@ -11,6 +11,9 @@ class User(Document):
     email: str
     password: str
     userId: Optional[str] = None
+
+    def __repr__(self) -> str:
+        return self.email+self.password
     
     class Settings:
         name = "users"
