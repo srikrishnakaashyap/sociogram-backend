@@ -1,17 +1,37 @@
+from typing import Annotated
+
+from fastapi import Depends, FastAPI, HTTPException, status
+from jose import JWTError, jwt
+
+from constants.GC import GC
+from models.token import TokenData
 from models.user import User
 
 
-class UserService:
 
-    @classmethod
-    def create_user(cls, user_props):
-        try:
-            user = User(name=user_props.get("name"),
-                        age=user_props.get("age"),
-                        description=user_props.get("description"),
-                        userid=user_props.get("id"),
-                        access=user_props.get("access", 10))
-            print(user)
-            return user.insert()
-        except Exception as e:
-            print(e)
+async def get_current_user(token: Annotated[str, Depends(GC.OAUTH2_SCHEME)]):
+    print("TOKEN", token)
+    print(type(token))
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    try:
+        payload = jwt.decode(token, GC.SECRET_KEY, algorithms=[GC.ALGORITHM])
+        username: str = payload.get("sub")
+        if username is None:
+            raise credentials_exception
+        token_data = TokenData(email=username)
+    except JWTError:
+        raise credentials_exception
+    user = await User.find_one(User.email == token_data.email)
+    if user is None:
+        raise credentials_exception
+    return user
+
+
+
+    
+
+

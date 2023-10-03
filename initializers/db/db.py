@@ -3,7 +3,6 @@ from constants.GC import GC
 import asyncio
 from beanie import init_beanie
 from models.user import User
-from services.user_service import UserService
 
 # db_client: AsyncIOMotorClient = None
 
