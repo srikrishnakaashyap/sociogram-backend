@@ -25,7 +25,8 @@ class User(Document):
                 "userid": "flname",
                 "description": "Hi",
                 "age": 20,
-                "access": 10
+                "access": 10,
+                "password": "***"
             }
         }
     

@@ -1,7 +1,6 @@
 from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, status
 from models.user import User
-# from typing import Annotated
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from constants.GC import GC
 from services.password_service import PasswordService
