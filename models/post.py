@@ -12,7 +12,6 @@ class Post(Document):
     likes: Optional[List[Link[User]]] = []
     dislikes: Optional[List[Link[User]]] = []
     files: Optional[List[File]] = None
-    # files: Optional[List[str]] = None
 
     class Settings:
 
