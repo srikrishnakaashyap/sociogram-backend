@@ -10,15 +10,14 @@ from models.user import User
 
 
 async def get_current_user(token: Annotated[str, Depends(GC.OAUTH2_SCHEME)]):
-    print("TOKEN", token)
-    print(type(token))
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
         headers={"WWW-Authenticate": "Bearer"},
     )
     try:
-        payload = jwt.decode(token, GC.SECRET_KEY, algorithms=[GC.ALGORITHM])
+        payload = jwt.decode(token, GC.SECRET_KEY, algorithms=[GC.JWT_HASH_ALGORITHM])
+        print(payload.get("exp"))
         username: str = payload.get("sub")
         if username is None:
             raise credentials_exception

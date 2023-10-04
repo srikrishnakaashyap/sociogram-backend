@@ -9,7 +9,7 @@ class GC:
     DATABASE_NAME = config.get('DB_NAME')
     OAUTH2_SCHEME = OAuth2PasswordBearer(tokenUrl="login")
     SECRET_KEY = config.get('SECRET_KEY')
-    ALGORITHM = "HS256"
+    JWT_HASH_ALGORITHM = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES = 30
     PWD_CONTEXT = CryptContext(schemes=["bcrypt"], deprecated="auto")
 

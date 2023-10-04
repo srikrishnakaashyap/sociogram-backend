@@ -1,7 +1,7 @@
 from beanie import Document, Link
-from user import User
+from models.user import User
 
-class Comment:
+class Comment(Document):
 
     user: Link[User]
     comment: str

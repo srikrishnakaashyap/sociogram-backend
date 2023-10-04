@@ -1,10 +1,10 @@
 from beanie import Document, Link
-from user import User
-from comment import Comment
+from models.user import User
+from models.comment import Comment
 from typing import List
 
 class Post(Document):
-    user: Link[User]
+    user: Link[User] = None
     description: str
     comments: List[Link[Comment]] = []
     likes: List[Link[User]] = []

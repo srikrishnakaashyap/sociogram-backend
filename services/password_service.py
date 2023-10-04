@@ -19,13 +19,12 @@ class PasswordService:
     @classmethod
     async def create_access_token(cls, data: dict, expires_delta: timedelta | None = None):
         to_encode = data.copy()
-        print("TO ENCODE", to_encode)
         if expires_delta:
             expire = datetime.utcnow() + expires_delta
         else:
             expire = datetime.utcnow() + timedelta(minutes=300)
         to_encode.update({"exp": expire})
-        encoded_jwt = jwt.encode(to_encode, GC.SECRET_KEY, algorithm=GC.ALGORITHM)
+        encoded_jwt = jwt.encode(to_encode, GC.SECRET_KEY, algorithm=GC.JWT_HASH_ALGORITHM)
         return encoded_jwt
 
     @classmethod
