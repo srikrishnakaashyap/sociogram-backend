@@ -10,5 +10,4 @@ class File(Document):
     is_deleted: Optional[bool] = False
 
     class Settings:
-
         name = "media"

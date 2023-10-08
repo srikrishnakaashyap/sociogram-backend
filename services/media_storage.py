@@ -1,7 +1,6 @@
 import io
 import requests
 from constants.GC import GC
-from bs4 import BeautifulSoup
 import re
 import os
 import boto3
@@ -27,6 +26,7 @@ class MediaStorage:
 
     @classmethod
     def fetch_data_from_web3(cls, cid):
+        pass
         files_to_upload = []
         url = f"https://{cid}.ipfs.dweb.link"
         url = f"https://api.web3.storage/car/{cid}"
@@ -128,6 +128,7 @@ class MediaStorage:
 
     @classmethod
     def upload_files(cls, file_objects):
+        # print("FILE OBJECTS", file_objects)
         for file_id in file_objects.keys():
             try:
                 s3_object_key = f'{cls.folder_name}/{time.time()}_{file_objects[file_id][0].name}.webp'
@@ -151,17 +152,17 @@ class MediaStorage:
     @classmethod
     async def update_file_objects(cls, file_objects): # Not working. Fix!
         ids = list(file_objects.keys())
-        docs = await File.find({"id": {"$in": ids}}).to_list()
+        # [File1, File2]
+        #File1.perma
         try:
-            async with BulkWriter() as bulk_writer:
-
-                # Update the `str` fields of the model objects.
-                for doc in docs:
-                    print(doc.id, file_objects[doc.id])
-                    await bulk_writer.update_one(File, {"_id": doc.id}, {"$set": {"temp_link": "", "perma_link": file_objects[doc.id][1]}})
-
-                # Execute all of the updates in bulk.
-                await bulk_writer.commit()
+            file_model_list = []
+            for file, name in file_objects.values():
+                file.perma_link = name
+                file.temp_link = ""
+                await File.save(file)                
+                # file_model_list.append(file)
+            # print(file_model_list)
+            # await File.save_changes(file_model_list)
         except Exception as e:
             print(e)
         print("updated files in db")
