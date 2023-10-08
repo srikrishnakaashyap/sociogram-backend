@@ -19,7 +19,8 @@ async def read_users_me(current_user: Annotated[User, Depends(get_current_user)]
 
 @router.post('/signup', response_description="created user")
 async def create(user: User)->dict:
-    if await User.find_one(User.email == user.email) is None:
+    if await User.find_one(User.email == user.email.lower()) is None:
+        user.email = user.email.lower()
         user.password = PasswordService.get_password_hash(user.password)
         response = await user.create()
         return {'message': 'user created'}
@@ -28,7 +29,7 @@ async def create(user: User)->dict:
 
 @router.post('/login', response_description="user loggedin", response_model=Token)
 async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
-    user = await PasswordService.authenticate_user(form_data.username, form_data.password)
+    user = await PasswordService.authenticate_user(form_data.username.lower(), form_data.password)
     print("USER", user)
     if not user:
         raise HTTPException(

@@ -3,6 +3,7 @@ from models.user import User
 from models.comment import Comment
 from models.file import File
 from typing import List, Optional
+from pydantic import BaseModel
 
 
 class Post(Document):
@@ -17,7 +18,15 @@ class Post(Document):
 
         name = "posts"
 
+class UploadFileModel(BaseModel):
+    # _id: Optional[str] = None
+    name: str
+    type: str
+    key: str
 
-class CreatePostModel(Document):
+class CreatePostModel(BaseModel):
+    # _id: Optional[str] = None
     description: str
-    cid: Optional[str] = None
+    media: Optional[List[UploadFileModel]] = None
+
+

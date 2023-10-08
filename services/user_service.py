@@ -27,6 +27,8 @@ async def get_current_user(token: Annotated[str, Depends(GC.OAUTH2_SCHEME)]):
     user = await User.find_one(User.email == token_data.email)
     if user is None:
         raise credentials_exception
+    
+    print("USER", user)
     return user
 
 
