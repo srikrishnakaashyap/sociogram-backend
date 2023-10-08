@@ -12,7 +12,7 @@ class Post(Document):
     comments: Optional[List[Link[Comment]]] = []
     likes: Optional[List[Link[User]]] = []
     dislikes: Optional[List[Link[User]]] = []
-    files: Optional[List[File]] = None
+    media: Optional[List[Link[File]]] = None
 
     class Settings:
 

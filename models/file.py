@@ -8,3 +8,7 @@ class File(Document):
     temp_link: Optional[str] = ""
     perma_link: Optional[str] = ""
     is_deleted: Optional[bool] = False
+
+    class Settings:
+
+        name = "media"

@@ -44,3 +44,4 @@ typing_extensions==4.8.0
 urllib3==2.0.6
 uvicorn==0.23.2
 varint==1.0.2
+pillow==10.0.1
