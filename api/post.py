@@ -18,8 +18,11 @@ async def create(user:Annotated[User, Depends(get_current_user)], post: CreatePo
     for m in media:
         file = File( **{"name":m.name,"type":m.type, "temp_link":f"https://file.io/{m.key}" })
         file_objects.append(file)
+    
+    await File.insert_many(file_objects)
     post_model = Post(user=user, description=post.description, files=file_objects)
     response = await post_model.create()
+    # updateFiles(file_objects)
     return {'message': 'post created'}
 
 @router.post('/updatePost', response_description="updated post")
