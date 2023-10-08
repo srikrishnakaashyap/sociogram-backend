@@ -23,7 +23,7 @@ async def create(user: Annotated[User, Depends(get_current_user)], post: CreateP
 
     file_objects_op = await File.insert_many(file_objects)
     post_model = Post(user=user, description=post.description,
-                      media=file_objects_op.inserted_ids)
+                      files=file_objects_op.inserted_ids)
     response = await post_model.create()
     # updateFiles(file_objects)
 

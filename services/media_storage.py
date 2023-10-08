@@ -150,19 +150,13 @@ class MediaStorage:
         return file_objects
 
     @classmethod
-    async def update_file_objects(cls, file_objects): # Not working. Fix!
+    async def update_file_objects(cls, file_objects):
         ids = list(file_objects.keys())
-        # [File1, File2]
-        #File1.perma
         try:
-            file_model_list = []
             for file, name in file_objects.values():
                 file.perma_link = name
                 file.temp_link = ""
                 await File.save(file)                
-                # file_model_list.append(file)
-            # print(file_model_list)
-            # await File.save_changes(file_model_list)
         except Exception as e:
             print(e)
         print("updated files in db")
