@@ -14,8 +14,8 @@ class GC:
     PWD_CONTEXT = CryptContext(schemes=["bcrypt"], deprecated="auto")
     S3_ACCESS_KEY = config.get("S3_ACCESS_KEY")
     S3_SECRET_KEY = config.get("S3_SECRET_KEY")
-    S3_BUCKET_NAME = config.get("S3_SECRET_KEY")
-    S3_UPLOAD_FOLDER_NAME = config.get("S3_SECRET_KEY")
+    S3_BUCKET_NAME = config.get("S3_BUCKET_NAME")
+    S3_UPLOAD_FOLDER_NAME = config.get("S3_UPLOAD_FOLDER_NAME")
     WEB3 = config.get("WEB3")
 
     

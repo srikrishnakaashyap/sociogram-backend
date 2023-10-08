@@ -9,8 +9,9 @@ import botocore
 import base64
 from models.file import File
 import time
-from beanie import operators
+from beanie import operators, BulkWriter
 from PIL import Image
+
 
 class MediaStorage:
 
@@ -21,8 +22,8 @@ class MediaStorage:
     folder_name = GC.S3_UPLOAD_FOLDER_NAME
 
     s3 = boto3.client('s3',
-    aws_access_key_id=aws_access_key_id,
-    aws_secret_access_key=aws_secret_access_key)
+                      aws_access_key_id=aws_access_key_id,
+                      aws_secret_access_key=aws_secret_access_key)
 
     @classmethod
     def fetch_data_from_web3(cls, cid):
@@ -43,7 +44,8 @@ class MediaStorage:
                 anchor_tags = soup.find_all('a', href=True)
 
                 # Extract the 'href' attributes that point to images
-                image_links = [os.path.basename(tag['href']) for tag in anchor_tags if ('ipfs-hash' not in tag.get("class", []) and re.search(r'\.(jpg|jpeg|png|gif|bmp|svg)$', tag['href'], re.IGNORECASE))]
+                image_links = [os.path.basename(tag['href']) for tag in anchor_tags if (
+                    'ipfs-hash' not in tag.get("class", []) and re.search(r'\.(jpg|jpeg|png|gif|bmp|svg)$', tag['href'], re.IGNORECASE))]
                 # print(image_links)
                 # Print the image links
                 for link in image_links:
@@ -51,14 +53,15 @@ class MediaStorage:
                     files_to_upload.append(url)
                 return files_to_upload
             else:
-                print(f"Failed to fetch file from Web3.Storage. Status code: {response.status_code}")
+                print(
+                    f"Failed to fetch file from Web3.Storage. Status code: {response.status_code}")
                 return None
         except Exception as e:
             print(f"Error: {e}")
             return None
-    
+
     @classmethod
-    def fetch_media_from_web3(cls, url, cid)->list:
+    def fetch_media_from_web3(cls, url, cid) -> list:
         headers = {
             "Authorization": f"Bearer {cls.web3_token}"
         }
@@ -74,6 +77,7 @@ class MediaStorage:
         except Exception as e:
             print(f"Error: {e}")
             return None
+
     @classmethod
     async def fileio_to_s3(cls, file_object_ids):
         print("file objs from db")
@@ -82,11 +86,12 @@ class MediaStorage:
         image_objects = cls.fetch_media_from_fileio(file_objects)
         processed_image_objects = dict()
         for file_object in file_objects:
-            processed_image_objects[file_object.id] = [file_object, cls.process_media(image_objects[file_object.id][1])]
+            processed_image_objects[file_object.id] = [
+                file_object, cls.process_media(image_objects[file_object.id][1])]
         print("upload files")
         file_objects = cls.upload_files(processed_image_objects)
         print("update file objects")
-        cls.update_file_objects(file_objects)
+        await cls.update_file_objects(file_objects)
 
     @classmethod
     async def file_objs_from_db(cls, file_object_ids):
@@ -94,7 +99,7 @@ class MediaStorage:
         # file_objects = File.get_all(*filters).to_list()
         file_objects = await File.find(operators.In(File.id, file_object_ids)).to_list()
         return file_objects
-        
+
     @classmethod
     def fetch_media_from_fileio(cls, file_objects):
         image_objects = dict()
@@ -104,7 +109,7 @@ class MediaStorage:
             if response.status_code == 200:
                 image_objects[file_object.id] = [file_object, response.content]
         return image_objects
-  
+
     @classmethod
     def process_media(cls, content):
         return content
@@ -120,7 +125,7 @@ class MediaStorage:
 
         # Return the WebP image string
         return webp_image_string
-    
+
     @classmethod
     def upload_files(cls, file_objects):
         for file_id in file_objects.keys():
@@ -134,14 +139,29 @@ class MediaStorage:
                     Key=s3_object_key
                 )
 
-                print(f"Image '{s3_object_key}' uploaded to S3 bucket '{cls.bucket_name}' successfully.")
+                print(
+                    f"Image '{s3_object_key}' uploaded to S3 bucket '{cls.bucket_name}' successfully.")
                 file_objects[file_id][1] = s3_object_key
             except botocore.exceptions.NoCredentialsError:
                 print("AWS credentials are not properly configured.")
             except Exception as e:
-                print(f"An error occurred: {e}") #### Throw error in console
+                print(f"An error occurred: {e}")  # Throw error in console
         return file_objects
-    
+
     @classmethod
-    def update_file_objects(file_objects):
-        pass
+    async def update_file_objects(cls, file_objects): # Not working. Fix!
+        ids = list(file_objects.keys())
+        docs = await File.find({"id": {"$in": ids}}).to_list()
+        try:
+            async with BulkWriter() as bulk_writer:
+
+                # Update the `str` fields of the model objects.
+                for doc in docs:
+                    print(doc.id, file_objects[doc.id])
+                    await bulk_writer.update_one(File, {"_id": doc.id}, {"$set": {"temp_link": "", "perma_link": file_objects[doc.id][1]}})
+
+                # Execute all of the updates in bulk.
+                await bulk_writer.commit()
+        except Exception as e:
+            print(e)
+        print("updated files in db")
