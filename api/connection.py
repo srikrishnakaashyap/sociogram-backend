@@ -14,6 +14,10 @@ router = APIRouter()
 @router.put("/connect/{email}", response_description="Returns True if Connection Request is Sent")
 async def connection_request(user: Annotated[User, Depends(get_current_user)], email):
     try:
+        current_user = GraphUser.nodes.get(email=user.email)
+        connection_request = current_user.connection_requests.get_or_none(email=email)
+        connections1 = current_user.connection.get_or_none(email=email)
+        
         from_user = GraphUser.nodes.get(email=user.email)
         to_user = GraphUser.nodes.get(email=email)
         to_user.connection_requests.connect(from_user)
@@ -23,12 +27,9 @@ async def connection_request(user: Annotated[User, Depends(get_current_user)], e
         return {"status": 500, "message": f"Failed with error: {e}"}
 
 
-@router.get("/view-connections")
+@router.get("/view-connections-requests")
 async def view_connection_requests(user: Annotated[User, Depends(get_current_user)]):
     try:
-        current_user = GraphUser.nodes.get(email=user.email)
-        connection_request = current_user.connection_requests.get_or_none(email=email)
-        connections1 = current_user.connection.get_or_none(email=email)
         connection_requests = GraphUser.nodes.get(email=user.email).connection_requests.all()
         user_objects = [await User.find_one(User.email == i.email) for i in connection_requests]
         response_objects = []
