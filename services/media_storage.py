@@ -8,7 +8,7 @@ import botocore
 import base64
 from models.mongo.file import File
 import time
-from beanie import operators, BulkWriter
+from beanie import operators
 from PIL import Image
 
 
@@ -95,8 +95,6 @@ class MediaStorage:
 
     @classmethod
     async def file_objs_from_db(cls, file_object_ids):
-        # filters = [File.get(id) for id in file_object_ids]
-        # file_objects = File.get_all(*filters).to_list()
         file_objects = await File.find(operators.In(File.id, file_object_ids)).to_list()
         return file_objects
 
@@ -117,13 +115,10 @@ class MediaStorage:
         image = Image.frombuffer(content)
         image.save(webp_image_bytes, format='WEBP')
 
-        # Get the WebP image bytes as a string
         webp_image_string = webp_image_bytes.getvalue()
 
-        # Close the WebP image bytes
         webp_image_bytes.close()
 
-        # Return the WebP image string
         return webp_image_string
 
     @classmethod
@@ -146,7 +141,7 @@ class MediaStorage:
             except botocore.exceptions.NoCredentialsError:
                 print("AWS credentials are not properly configured.")
             except Exception as e:
-                print(f"An error occurred: {e}")  # Throw error in console
+                print(f"An error occurred: {e}")  # Throw error in front-end
         return file_objects
 
     @classmethod
@@ -156,9 +151,8 @@ class MediaStorage:
             for file, name in file_objects.values():
                 file.perma_link = name
                 file.temp_link = ""
-
-                # Use Bulk Save 
-                await File.save(file)                
+                file.name = name.split("/")[-1]
+                await File.save(file)   # Optimize with batch save
+                print("updated files in db")             
         except Exception as e:
-            print(e)
-        print("updated files in db")
+            print(f"An error occurred: {e}")  # Throw error in front-end
