@@ -1,4 +1,5 @@
-from beanie import Document
+import pymongo
+from beanie import Document, Indexed
 from typing import Optional
 from pydantic import EmailStr
 
@@ -8,7 +9,7 @@ class User(Document):
     description: Optional[str] = None
     age: int
     access: Optional[int] = 10
-    email: str
+    email: Indexed(str, index_type=pymongo.TEXT)
     password: str
     userId: Optional[str] = None
 
