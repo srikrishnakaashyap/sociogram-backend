@@ -7,6 +7,8 @@ from models.mongo.post import Post
 from models.mongo.file import File
 from models.mongo.comment import Comment
 
+from neomodel import config
+
 # db_client: AsyncIOMotorClient = None
 
 
@@ -25,6 +27,8 @@ async def connect_and_init_db():
     except Exception as e:
         print(e)
         raise
+
+    config.DATABASE_URL ='neo4j+s://{}:{}@{}'.format(GC.NEO4J_USERNAME, GC.NEO4J_PASSWORD, GC.NEO4J_URI)
 
 
 async def close_db_connect():

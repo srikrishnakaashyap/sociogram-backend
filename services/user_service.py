@@ -17,7 +17,7 @@ async def get_current_user(token: Annotated[str, Depends(GC.OAUTH2_SCHEME)]):
     )
     try:
         payload = jwt.decode(token, GC.SECRET_KEY, algorithms=[GC.JWT_HASH_ALGORITHM])
-        print(payload.get("exp"))
+        # print(payload.get("exp"))
         username: str = payload.get("sub")
         if username is None:
             raise credentials_exception

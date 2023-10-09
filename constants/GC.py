@@ -16,7 +16,10 @@ class GC:
     S3_SECRET_KEY = config.get("S3_SECRET_KEY")
     S3_BUCKET_NAME = config.get("S3_BUCKET_NAME")
     S3_UPLOAD_FOLDER_NAME = config.get("S3_UPLOAD_FOLDER_NAME")
-    WEB3 = config.get("WEB3")
+    WEB3 = config.get("WEB3", None)
+    NEO4J_URI = config.get("NEO4J_URI", None)
+    NEO4J_USERNAME = config.get("NEO4J_USERNAME", None)
+    NEO4J_PASSWORD = config.get("NEO4J_PASSWORD", None)
 
     
 

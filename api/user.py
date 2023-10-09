@@ -7,6 +7,7 @@ from services.password_service import PasswordService
 from datetime import timedelta
 from models.request.token import Token
 from services.user_service import get_current_user
+from models.neo.user import User as GraphUser
 
 router = APIRouter()
 
@@ -23,6 +24,7 @@ async def create(user: User)->dict:
         user.email = user.email.lower()
         user.password = PasswordService.get_password_hash(user.password)
         response = await user.create()
+        graph_user = GraphUser(email=user.email).save()
         return {'message': 'user created'}
     else:
         return {'message': 'user already exists'}
