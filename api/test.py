@@ -1,12 +1,12 @@
 from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, status
-from models.user import User
+from models.mongo.user import User
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from constants.GC import GC
 from services.password_service import PasswordService
 from datetime import timedelta
-from models.post import Post
-from models.file import File
+from models.mongo.post import Post
+from models.mongo.file import File
 from services.user_service import get_current_user
 
 router = APIRouter()

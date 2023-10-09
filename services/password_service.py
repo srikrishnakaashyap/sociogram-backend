@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from jose import jwt
 
 from constants.GC import GC
-from models.user import User
+from models.mongo.user import User
 
 
 class PasswordService:

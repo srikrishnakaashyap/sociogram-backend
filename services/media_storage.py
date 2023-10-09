@@ -6,7 +6,7 @@ import os
 import boto3
 import botocore
 import base64
-from models.file import File
+from models.mongo.file import File
 import time
 from beanie import operators, BulkWriter
 from PIL import Image
@@ -156,6 +156,8 @@ class MediaStorage:
             for file, name in file_objects.values():
                 file.perma_link = name
                 file.temp_link = ""
+
+                # Use Bulk Save 
                 await File.save(file)                
         except Exception as e:
             print(e)

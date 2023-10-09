@@ -1,7 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Form
-from models.post import Post, CreatePostModel
-from models.user import User
-from models.file import File
+from models.mongo.post import Post
+from models.request.post import CreatePostModel
+from models.mongo.user import User
+from models.mongo.file import File
 from typing import Annotated
 from services.user_service import get_current_user
 from services.media_storage import MediaStorage

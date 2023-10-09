@@ -2,10 +2,10 @@ from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorDatabase
 from constants.GC import GC
 import asyncio
 from beanie import init_beanie
-from models.user import User
-from models.post import Post, CreatePostModel, UploadFileModel
-from models.file import File
-from models.comment import Comment
+from models.mongo.user import User
+from models.mongo.post import Post
+from models.mongo.file import File
+from models.mongo.comment import Comment
 
 # db_client: AsyncIOMotorClient = None
 

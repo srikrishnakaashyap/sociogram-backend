@@ -4,8 +4,8 @@ from fastapi import Depends, FastAPI, HTTPException, status
 from jose import JWTError, jwt
 
 from constants.GC import GC
-from models.token import TokenData
-from models.user import User
+from models.request.token import TokenData
+from models.mongo.user import User
 
 
 

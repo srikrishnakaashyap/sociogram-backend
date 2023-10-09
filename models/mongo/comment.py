@@ -1,5 +1,5 @@
 from beanie import Document, Link
-from models.user import User
+from models.mongo.user import User
 
 class Comment(Document):
 
