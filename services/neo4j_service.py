@@ -2,10 +2,9 @@ from models.mongo.user import User
 from models.neo.user import User as GraphUser
 from neomodel import match,Traversal
 from models.mongo.user import User
+
 class Neo4jService:
    
-    # Normal user to GraphUser
-    #GraphUser to a normalUser
     @classmethod
     def user_to_graph_user(cls, user=None, email=None):
         email = email or user.email

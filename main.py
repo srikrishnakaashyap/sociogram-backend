@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from initializers.setup_config import SetupConfig
-from api import user, post, test, connection
+from api import user, post, test, connection, dashboard
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
@@ -23,3 +23,4 @@ app.include_router(user.router)
 app.include_router(post.router)
 app.include_router(test.router)
 app.include_router(connection.router)
+app.include_router(dashboard.router)
